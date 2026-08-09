@@ -4,20 +4,20 @@ import axios from 'axios'
 
 function App() {
   const [url, setUrl] = useState("")
-function onSubmit(){
-try {
-const response = axios.post("localhost3000/short",{
-  url
-}
-)
-console.log(response.data)
-}
-catch(error){
-console.log(error)
-}
 
-   setUrl("")
-}
+    async function onSubmit(){
+      try {
+        const response =await axios.post("http://localhost:3000/short",{
+          url
+      })
+      console.log("response is here:",response.data)
+      }
+      catch(error){
+      console.log(error)
+      }
+
+        setUrl("")
+      }
   return (
     <div className="app">
 
