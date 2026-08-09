@@ -1,10 +1,21 @@
 import { useState } from 'react'
+import axios from 'axios'
  import './App.css'
 
 function App() {
   const [url, setUrl] = useState("")
 function onSubmit(){
-   window.alert(url)
+try {
+const response = axios.post("localhost3000/short",{
+  url
+}
+)
+console.log(response.data)
+}
+catch(error){
+console.log(error)
+}
+
    setUrl("")
 }
   return (
