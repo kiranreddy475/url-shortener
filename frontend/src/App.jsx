@@ -6,7 +6,7 @@ function App() {
   const [url, setUrl] = useState("")
 function onSubmit(){
 try {
-const response = axios.post("localhost3000/short",{
+const response = axios.post("http://localhost:9000/short",{
   url
 }
 )
