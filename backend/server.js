@@ -23,7 +23,26 @@ pool.connect()
     .catch(err => {
         console.error("PostgreSQL connection failed:", err);
     });
+//---------------
+//business logic
+//---------------
+function generateShortCode(length = 6) {
 
+    const characters =
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+
+        const randomIndex =
+            Math.floor(Math.random() * characters.length);
+
+        result += characters[randomIndex];
+    }
+
+    return result;
+}
 // ----------------------
 // Create users table
 // ----------------------
@@ -62,7 +81,7 @@ app.post("/short", async (req, res) => {
         console.log("Received URL:", longUrl);
 
         // Temporary short URL
-        const shortUrl = "SNIDGHABOLLAVARAM";
+        const shortUrl = generateShortCode()
 
         const result = await pool.query(
             `
