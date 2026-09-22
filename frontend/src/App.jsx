@@ -4,13 +4,18 @@ import axios from 'axios'
 
 function App() {
   const [url, setUrl] = useState("")
-function onSubmit(){
+  const [shortUrl, setShortUrl] = useState("")
+  
+ async function onSubmit(){
 try {
-const response = axios.post("http://localhost:3000/short",{
+  
+const response =   await axios.post("http://localhost:3000/short",{
   url
 }
 )
+
 console.log(response.data)
+setShortUrl(response.data.responseUrl)
 }
 catch(error){
 console.log(error)
@@ -37,18 +42,28 @@ console.log(error)
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
-
           <button  onClick={onSubmit}>
             Shorten
           </button>
-
-        </div>
-
+        
+        
       </div>
-
-    </div>
+    
+        {shortUrl && (
+  <div className="result-container">
+    <h3>Short URL</h3>
+    <a
+      href={shortUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {shortUrl}
+    </a>
+  </div>
+)}
+      </div>
       
+    </div>
   )
 }
-
 export default App

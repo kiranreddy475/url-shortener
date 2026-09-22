@@ -72,6 +72,10 @@ createTable();//runs the code here,calls here
 // Short URL API
 // ----------------------
 
+// ----------------------
+// Redirect Short URL
+// ----------------------
+
 app.post("/short", async (req, res) => {
 
     try {
@@ -80,21 +84,43 @@ app.post("/short", async (req, res) => {
 
         console.log("Received URL:", longUrl);
 
-        // Temporary short URL
-        const shortUrl = generateShortCode()
+        // 1. Check whether URL already exists
+        const existingUrl = await pool.query(
+            `
+            SELECT short_url
+            FROM users
+            WHERE long_url = $1
+            `,
+            [longUrl]
+        );
 
-        const result = await pool.query(
+        // 2. If URL already exists
+        if (existingUrl.rows.length > 0) {
+
+            const shortUrl = existingUrl.rows[0].short_url;
+
+            return res.json({
+                message: "URL already exists",
+                responseUrl: `http://localhost:3000/${shortUrl}`
+            });
+        }
+
+        // 3. URL doesn't exist, generate new short code
+        const shortUrl = generateShortCode();
+
+        // 4. Save it
+        await pool.query(
             `
             INSERT INTO users (short_url, long_url)
             VALUES ($1, $2)
-            RETURNING *
             `,
             [shortUrl, longUrl]
         );
 
+        // 5. Return new short URL
         res.json({
-            message: "URL received successfully",
-            data: result.rows[0]
+            message: "URL shortened successfully",
+            responseUrl: `http://localhost:3000/${shortUrl}`
         });
 
     } catch (error) {
@@ -106,6 +132,45 @@ app.post("/short", async (req, res) => {
         });
     }
 });
+app.get("/:shortCode", async (req, res) => {
+
+    try {
+
+        const { shortCode } = req.params;
+
+        console.log("Short code received:", shortCode);
+
+        const result = await pool.query(
+            `
+            SELECT long_url
+            FROM users
+            WHERE short_url = $1
+            `,
+            [shortCode]
+        );
+
+        // Short URL doesn't exist
+        if (result.rows.length === 0) {
+            return res.status(404).send("Short URL not found");
+        }
+
+        const longUrl = result.rows[0].long_url;
+
+        // Redirect browser to original URL
+        res.redirect(longUrl);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            message: "Something went wrong"
+        });
+    }
+});
+
+
+ 
 app.listen(3000,()=>{
     console.log("server running on port no 3000")
 })
