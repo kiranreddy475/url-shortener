@@ -1,24 +1,31 @@
-import { useState } from "react";
-
 function Login({ onLogin }) {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  function handleLogin() {
-
-    const staticUsername = "admin";
-    const staticPassword = "123456";
-
-    if (
-      username === staticUsername &&
-      password === staticPassword
-    ) {
+  async function handleLogin() {
+    try {
       setError("");
-      onLogin();
-    } else {
-      setError("Invalid username or password");
+
+      const response = await axios.post(
+        "http://localhost:3000/login",
+        {
+          username,
+          password
+        }
+      );
+
+      console.log(response.data);
+
+      if (response.data.success) {
+        onLogin();
+      }
+
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+        "Something went wrong"
+      );
     }
   }
 
@@ -67,5 +74,3 @@ function Login({ onLogin }) {
     </div>
   );
 }
-
-export default Login;
