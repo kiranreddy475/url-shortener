@@ -168,6 +168,31 @@ app.get("/:shortCode", async (req, res) => {
         });
     }
 });
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  // Static credentials on backend
+  const validUsername = "admin";
+  const validPassword = "123456";
+
+  if (
+    username === validUsername &&
+    password === validPassword
+  ) {
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        username
+      }
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    message: "Invalid username or password"
+  });
+});
 
 
  
