@@ -1,7 +1,7 @@
 
 import { useState } from "react"
 import axios from "axios";
-function Login({ onLogin }) {
+function Login({ onLogin, onShowRegister })  {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -65,12 +65,21 @@ function Login({ onLogin }) {
         >
           Login
         </button>
+        <p>
+  Don't have an account?
+  <button onClick={onShowRegister}>
+    Register
+  </button>
+</p>
+
+       
 
         {error && (
           <p className="login-error">
             {error}
           </p>
         )}
+        
 
       </div>
 
